@@ -2,22 +2,23 @@ package Task5;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 
-import static com.sun.java.accessibility.util.AWTEventMonitor.addMouseListener;
-
-public class Main {
+public class Main extends JPanel{
     private static final int CELL_SIZE = 20;
     private static final int GRID_WIDTH = 20;
     private static final int GRID_HEIGHT = 20;
+    protected Integer[][] grid = new Grid2D().initGrid2D(GRID_WIDTH, GRID_HEIGHT);
     private static Point start = null;
     private static Point end = null;
 
     public static void main(String[] args)  {
         createWindow();
+    }
+
+    public Main() {
+        setPreferredSize(new Dimension(GRID_WIDTH * CELL_SIZE, GRID_HEIGHT * CELL_SIZE));
+        setBackground(Color.WHITE);
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -59,18 +60,66 @@ public class Main {
         frame.setVisible(true);
     }
 
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        // Отрисовка сетки
+        g.setColor(Color.LIGHT_GRAY);
+        for (int i = 0; i <= GRID_WIDTH; i++) {
+            g.drawLine(i * CELL_SIZE, 0, i * CELL_SIZE, GRID_HEIGHT * CELL_SIZE);
+        }
+        for (int i = 0; i <= GRID_HEIGHT; i++) {
+            g.drawLine(0, i * CELL_SIZE, GRID_WIDTH * CELL_SIZE, i * CELL_SIZE);
+        }
+
+        // Отрисовка клеток
+        for (int y = 0; y < GRID_HEIGHT; y++) {
+            for (int x = 0; x < GRID_WIDTH; x++) {
+                if (grid[y][x] == 1) {
+                    g.setColor(Color.BLACK);
+                    g.fillRect(x * CELL_SIZE + 1, y * CELL_SIZE + 1, CELL_SIZE - 1, CELL_SIZE - 1);
+                } else if (grid[y][x] == -1) {
+                    g.setColor(Color.BLUE);
+                    g.fillRect(x * CELL_SIZE + CELL_SIZE * 2 / 7, y * CELL_SIZE + CELL_SIZE * 2 / 7, CELL_SIZE / 2, CELL_SIZE / 2);
+                }
+            }
+        }
+
+        // Отрисовка стартовой и конечной клеток
+        if (start != null) {
+            g.setColor(Color.GREEN);
+            g.fillRect(start.x * CELL_SIZE + 2, start.y * CELL_SIZE + 2, CELL_SIZE - 3, CELL_SIZE - 3);
+        }
+        if (end != null) {
+            g.setColor(Color.RED);
+            g.fillRect(end.x * CELL_SIZE + 2, end.y * CELL_SIZE + 2, CELL_SIZE - 3, CELL_SIZE - 3);
+        }
+
+        // Отрисовка меток по краям сетки
+        g.setColor(Color.BLACK);
+        for (int i = 0; i < GRID_WIDTH; i++) {
+            char label = (char) ('A' + i);
+            g.drawString(String.valueOf(label), i * CELL_SIZE + (CELL_SIZE / 2) - 5, GRID_HEIGHT * CELL_SIZE + 15);
+        }
+
+        for (int i = 0; i < GRID_HEIGHT; i++) {
+            g.drawString(String.valueOf(i + 1), GRID_WIDTH * CELL_SIZE + 5, i * CELL_SIZE + (CELL_SIZE / 2) + 5);
+        }
+    }
+
     private static void createUI(final JFrame frame){
         JPanel panel = new JPanel();
         LayoutManager layout = new FlowLayout();
         panel.setLayout(layout);
+        final JSpinner spinByX = new JSpinner();
+        final JSpinner spinByY = new JSpinner();
         final JRadioButton roadButton = new JRadioButton("Дорога");
         final JRadioButton groundButton = new JRadioButton("Земля");
         final JRadioButton sandButton = new JRadioButton("Песок");
         final JRadioButton obstacleButton = new JRadioButton("Препятствие");
-
-        // .getSource()).isSelected()
-
-
+        spinByX.setValue(GRID_WIDTH);
+        spinByY.setValue(GRID_HEIGHT);
 
         roadButton.addActionListener(new ActionListener() {
             @Override
@@ -86,6 +135,7 @@ public class Main {
                 }
             }
         });
+
         groundButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -100,6 +150,7 @@ public class Main {
                 }
             }
         });
+
         sandButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -114,6 +165,7 @@ public class Main {
                 }
             }
         });
+
         obstacleButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -128,6 +180,9 @@ public class Main {
                 }
             }
         });
+
+        panel.add(spinByX);
+        panel.add(spinByY);
         panel.add(roadButton);
         panel.add(groundButton);
         panel.add(sandButton);
