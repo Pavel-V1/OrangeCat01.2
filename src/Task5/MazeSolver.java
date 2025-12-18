@@ -1,5 +1,7 @@
 package Task5;
 
+import javafx.scene.layout.Border;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -16,7 +18,7 @@ public class MazeSolver extends JPanel {
     private Point start = null;
     private Point end = null;
 
-    public MazeSolver() {
+    private MazeSolver() {
         setPreferredSize(new Dimension(GRID_WIDTH * CELL_SIZE, GRID_HEIGHT * CELL_SIZE));
         setBackground(Color.WHITE);
         addMouseListener(new MouseAdapter() {
@@ -25,20 +27,24 @@ public class MazeSolver extends JPanel {
                 int x = e.getX() / CELL_SIZE;
                 int y = e.getY() / CELL_SIZE;
 
-                if (SwingUtilities.isLeftMouseButton(e)) {
-                    // Установка стартовой точки
-                    if (start == null) {
-                        start = new Point(x, y);
-                    } else if (end == null) {
-                        end = new Point(x, y);
-                    } else {
-                        // Если обе точки установлены, сбрасываем их
-                        start = new Point(x, y);
-                        end = null;
+                if (x >= 0 && x < GRID_WIDTH && y >= 0 && y < GRID_HEIGHT) {
+                    if (SwingUtilities.isRightMouseButton(e)) {
+                        /* вложенные if для игнорирования стенок */
+                        if (start == null || start != null && grid[y][x] == 1) {
+                            if (grid[y][x] != 1) {
+                                start = new Point(x, y);
+                            }
+                        } else if (end == null || end != null && grid[y][x] == 1) {
+                            if (grid[y][x] != 1) {
+                                end = new Point(x, y);
+                            }
+                        } else {
+                            start = new Point(x, y);
+                            end = null;
+                        }
+                    } else if (SwingUtilities.isLeftMouseButton(e)) {
+                        toggleCell(x, y);
                     }
-                } else if (SwingUtilities.isRightMouseButton(e)) {
-                    // Переключение стены или пустой клетки
-                    toggleCell(x, y);
                 }
                 repaint();
             }
@@ -46,9 +52,7 @@ public class MazeSolver extends JPanel {
     }
 
     private void toggleCell(int x, int y) {
-        if (x >= 0 && x < GRID_WIDTH && y >= 0 && y < GRID_HEIGHT) {
-            grid[y][x] = grid[y][x] == 0 ? 1 : 0;
-        }
+        grid[y][x] = grid[y][x] == 0 ? 1 : 0;
     }
 
     @Override
@@ -86,23 +90,14 @@ public class MazeSolver extends JPanel {
             g.setColor(Color.RED);
             g.fillRect(end.x * CELL_SIZE + 2, end.y * CELL_SIZE + 2, CELL_SIZE - 3, CELL_SIZE - 3);
         }
-
-        // Отрисовка меток по краям сетки
-        g.setColor(Color.BLACK);
-        for (int i = 0; i < GRID_WIDTH; i++) {
-            char label = (char) ('A' + i);
-            g.drawString(String.valueOf(label), i * CELL_SIZE + (CELL_SIZE / 2) - 5, GRID_HEIGHT * CELL_SIZE + 15);
-        }
-
-        for (int i = 0; i < GRID_HEIGHT; i++) {
-            g.drawString(String.valueOf(i + 1), GRID_WIDTH * CELL_SIZE + 5, i * CELL_SIZE + (CELL_SIZE / 2) + 5);
-        }
     }
 
-    public void findPath() {
+    private void findPath() {
         if (start == null || end == null) return;
 
         clearPreviousPath();
+
+//        PathFinder.findPath();
 
         Queue<Point> queue = new LinkedList<>();
         boolean[][] visited = new boolean[GRID_HEIGHT][GRID_WIDTH];
@@ -155,71 +150,87 @@ public class MazeSolver extends JPanel {
         return neighbors;
     }
 
-    public void saveMaze(String filename) throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
-            for (int[] row : grid) {
-                for (int cell : row) {
-                    writer.write(String.valueOf(cell));
-                }
-                writer.newLine();
-            }
-        }
-    }
-
-    public void loadMaze(String filename) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
-            String line;
-            int y = 0;
-            while ((line = reader.readLine()) != null && y < GRID_HEIGHT) {
-                for (int x = 0; x < line.length() && x < GRID_WIDTH; x++) {
-                    grid[y][x] = Character.getNumericValue(line.charAt(x));
-                }
-                y++;
-            }
-            repaint();
-        }
-    }
-
     public static void main(String[] args) throws Exception {
 
         JFrame frame = new JFrame("Maze Solver");
         MazeSolver mazeSolver = new MazeSolver();
-
-        JButton saveButton = new JButton("Сохранить");
-        saveButton.addActionListener(e -> {
-            try {
-                String filename = JOptionPane.showInputDialog("Введите имя файла для сохранения:");
-                mazeSolver.saveMaze(filename);
-            } catch(IOException ex){
-                ex.printStackTrace();
-            }
-        });
-
-        JButton loadButton = new JButton("Загрузить");
-        loadButton.addActionListener(e -> {
-            try {
-                String filename = JOptionPane.showInputDialog("Введите имя файла для загрузки:");
-                mazeSolver.loadMaze(filename);
-            } catch(IOException ex){
-                ex.printStackTrace();
-            }
-        });
-
+        JPanel panel = new JPanel();
+        LayoutManager layout = new FlowLayout();
+        panel.setLayout(layout);
         JButton findPathButton = new JButton("Найти путь");
         findPathButton.addActionListener(e -> mazeSolver.findPath());
-
+        JSpinner spinByX = new JSpinner();
+        JSpinner spinByY = new JSpinner();
+        JRadioButton roadButton = new JRadioButton("Дорога");
+        JRadioButton groundButton = new JRadioButton("Земля");
+        JRadioButton sandButton = new JRadioButton("Песок");
+        JRadioButton obstacleButton = new JRadioButton("Препятствие");
+        spinByX.setValue(GRID_WIDTH);
+        spinByY.setValue(GRID_HEIGHT);
         JPanel buttonPanel = new JPanel();
-        buttonPanel.add(saveButton);
-        buttonPanel.add(loadButton);
         buttonPanel.add(findPathButton);
 
         frame.setLayout(new BorderLayout());
-        frame.add(mazeSolver, BorderLayout.CENTER);
+        panel.add(spinByX);
+        panel.add(spinByY);
+        panel.add(roadButton);
+        panel.add(groundButton);
+        panel.add(sandButton);
+        panel.add(obstacleButton);
+        frame.add(mazeSolver);
         frame.add(buttonPanel, BorderLayout.SOUTH);
-
+        frame.getContentPane().add(panel, BorderLayout.BEFORE_FIRST_LINE);
         frame.pack();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
+        roadButton.addActionListener(e -> {
+            if (groundButton.isSelected()) {
+                groundButton.setSelected(false);
+            }
+            if (sandButton.isSelected()) {
+                sandButton.setSelected(false);
+            }
+            if (obstacleButton.isSelected()) {
+                obstacleButton.setSelected(false);
+            }
+        });
+
+        groundButton.addActionListener(e -> {
+            if (roadButton.isSelected()) {
+                roadButton.setSelected(false);
+            }
+            if (sandButton.isSelected()) {
+                sandButton.setSelected(false);
+            }
+            if (obstacleButton.isSelected()) {
+                obstacleButton.setSelected(false);
+            }
+        });
+
+        sandButton.addActionListener(e -> {
+            if (groundButton.isSelected()) {
+                groundButton.setSelected(false);
+            }
+            if (roadButton.isSelected()) {
+                roadButton.setSelected(false);
+            }
+            if (obstacleButton.isSelected()) {
+                obstacleButton.setSelected(false);
+            }
+        });
+
+        obstacleButton.addActionListener(e -> {
+            if (groundButton.isSelected()) {
+                groundButton.setSelected(false);
+            }
+            if (sandButton.isSelected()) {
+                sandButton.setSelected(false);
+            }
+            if (roadButton.isSelected()) {
+                roadButton.setSelected(false);
+            }
+        });
     }
 }

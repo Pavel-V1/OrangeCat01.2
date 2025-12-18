@@ -53,10 +53,9 @@ public class Main extends JPanel{
 
     private static void createWindow() {
         JFrame frame = new JFrame("Поиск пути");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         createUI(frame);
         frame.setSize(492, 200);
-        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 
@@ -121,63 +120,51 @@ public class Main extends JPanel{
         spinByX.setValue(GRID_WIDTH);
         spinByY.setValue(GRID_HEIGHT);
 
-        roadButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (groundButton.isSelected()) {
-                    groundButton.setSelected(false);
-                }
-                if (sandButton.isSelected()) {
-                    sandButton.setSelected(false);
-                }
-                if (obstacleButton.isSelected()) {
-                    obstacleButton.setSelected(false);
-                }
+        roadButton.addActionListener(e -> {
+            if (groundButton.isSelected()) {
+                groundButton.setSelected(false);
+            }
+            if (sandButton.isSelected()) {
+                sandButton.setSelected(false);
+            }
+            if (obstacleButton.isSelected()) {
+                obstacleButton.setSelected(false);
             }
         });
 
-        groundButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (roadButton.isSelected()) {
-                    roadButton.setSelected(false);
-                }
-                if (sandButton.isSelected()) {
-                    sandButton.setSelected(false);
-                }
-                if (obstacleButton.isSelected()) {
-                    obstacleButton.setSelected(false);
-                }
+        groundButton.addActionListener(e -> {
+            if (roadButton.isSelected()) {
+                roadButton.setSelected(false);
+            }
+            if (sandButton.isSelected()) {
+                sandButton.setSelected(false);
+            }
+            if (obstacleButton.isSelected()) {
+                obstacleButton.setSelected(false);
             }
         });
 
-        sandButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (groundButton.isSelected()) {
-                    groundButton.setSelected(false);
-                }
-                if (roadButton.isSelected()) {
-                    roadButton.setSelected(false);
-                }
-                if (obstacleButton.isSelected()) {
-                    obstacleButton.setSelected(false);
-                }
+        sandButton.addActionListener(e -> {
+            if (groundButton.isSelected()) {
+                groundButton.setSelected(false);
+            }
+            if (roadButton.isSelected()) {
+                roadButton.setSelected(false);
+            }
+            if (obstacleButton.isSelected()) {
+                obstacleButton.setSelected(false);
             }
         });
 
-        obstacleButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (groundButton.isSelected()) {
-                    groundButton.setSelected(false);
-                }
-                if (sandButton.isSelected()) {
-                    sandButton.setSelected(false);
-                }
-                if (roadButton.isSelected()) {
-                    roadButton.setSelected(false);
-                }
+        obstacleButton.addActionListener(e -> {
+            if (groundButton.isSelected()) {
+                groundButton.setSelected(false);
+            }
+            if (sandButton.isSelected()) {
+                sandButton.setSelected(false);
+            }
+            if (roadButton.isSelected()) {
+                roadButton.setSelected(false);
             }
         });
 
