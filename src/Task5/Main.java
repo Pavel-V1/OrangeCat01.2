@@ -43,54 +43,30 @@ class Main {
         frame.setMinimumSize(frame.getSize());
 
         roadButton.addActionListener(e -> {
-            if (groundButton.isSelected()) {
-                groundButton.setSelected(false);
-            }
-            if (sandButton.isSelected()) {
-                sandButton.setSelected(false);
-            }
-            if (obstacleButton.isSelected()) {
-                obstacleButton.setSelected(false);
-            }
+            groundButton.setSelected(false);
+            sandButton.setSelected(false);
+            obstacleButton.setSelected(false);
             mazeSolver.settingValue = 1;
         });
 
         groundButton.addActionListener(e -> {
-            if (roadButton.isSelected()) {
-                roadButton.setSelected(false);
-            }
-            if (sandButton.isSelected()) {
-                sandButton.setSelected(false);
-            }
-            if (obstacleButton.isSelected()) {
-                obstacleButton.setSelected(false);
-            }
+            roadButton.setSelected(false);
+            sandButton.setSelected(false);
+            obstacleButton.setSelected(false);
             mazeSolver.settingValue = 5;
         });
 
         sandButton.addActionListener(e -> {
-            if (groundButton.isSelected()) {
-                groundButton.setSelected(false);
-            }
-            if (roadButton.isSelected()) {
-                roadButton.setSelected(false);
-            }
-            if (obstacleButton.isSelected()) {
-                obstacleButton.setSelected(false);
-            }
+            groundButton.setSelected(false);
+            roadButton.setSelected(false);
+            obstacleButton.setSelected(false);
             mazeSolver.settingValue = 9;
         });
 
         obstacleButton.addActionListener(e -> {
-            if (groundButton.isSelected()) {
-                groundButton.setSelected(false);
-            }
-            if (sandButton.isSelected()) {
-                sandButton.setSelected(false);
-            }
-            if (roadButton.isSelected()) {
-                roadButton.setSelected(false);
-            }
+            groundButton.setSelected(false);
+            sandButton.setSelected(false);
+            roadButton.setSelected(false);
             mazeSolver.settingValue = Integer.MAX_VALUE;
         });
 
