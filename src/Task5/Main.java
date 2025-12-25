@@ -12,8 +12,7 @@ class Main {
         LayoutManager layout = new FlowLayout();
         panel.setLayout(layout);
         JButton findPathButton = new JButton("Найти путь");
-//        findPathButton.addActionListener(e -> pathFinder.findPath());
-        findPathButton.addActionListener(e -> System.out.println(frame.getSize()));
+        findPathButton.addActionListener(e -> pathFinder.findPath());
         JRadioButton roadButton = new JRadioButton("Дорога");
         JRadioButton groundButton = new JRadioButton("Земля");
         JRadioButton sandButton = new JRadioButton("Песок");

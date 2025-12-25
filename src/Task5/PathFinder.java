@@ -96,12 +96,36 @@ public class PathFinder extends JPanel {
 
         clearPreviousPath();
 
+        int[] prev = new int[GRID_WIDTH * GRID_HEIGHT];
+        prev[(GRID_WIDTH - 1) * start.y + start.x] = -1;
         int[][] d = new int[GRID_WIDTH][GRID_HEIGHT];
         for (int[] row : d) {
             Arrays.fill(row, Integer.MAX_VALUE);
         }
         d[start.x][start.y] = 0;
-        PriorityQueue<Point> q = new PriorityQueue<>();
+        PriorityQueue<Integer> q = new PriorityQueue<>();
+        q.add((GRID_WIDTH - 1) * start.y + start.x);
+
+        while (!q.isEmpty()) {
+            int cur = q.poll();
+            if (cur == ((GRID_WIDTH - 1) * end.y + end.x)) {
+                break;
+            }
+            Point curP = new Point(cur % GRID_WIDTH, cur / GRID_WIDTH);
+            for (Point p : getNeighbors(curP)) {
+                q.add((GRID_WIDTH - 1) * p.y + p.x);
+                if (d[curP.x][curP.y] + grid2D.getCell(p.x, p.y) < d[p.x][p.y]) {
+                    d[p.x][p.y] = d[curP.x][curP.y] + grid2D.getCell(p.x, p.y);
+                    prev[(GRID_WIDTH - 1) * p.y + p.x] = cur;
+                }
+            }
+        }
+
+        int cur = prev[(GRID_WIDTH - 1) * end.y + end.x];
+        while (cur != -1) {
+            pointArrayList.add(new Point(cur % GRID_WIDTH, cur / GRID_WIDTH));
+            cur = prev[cur];
+        }
 
 //        Queue<Point> queue = new LinkedList<>();
 //        boolean[][] visited = new boolean[GRID_HEIGHT][GRID_WIDTH];
