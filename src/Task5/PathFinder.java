@@ -97,33 +97,33 @@ public class PathFinder extends JPanel {
         clearPreviousPath();
 
         int[] prev = new int[GRID_WIDTH * GRID_HEIGHT];
-        prev[(GRID_WIDTH - 1) * start.y + start.x] = -1;
+        prev[GRID_WIDTH * (start.y - 1) + start.x] = -1;
         int[][] d = new int[GRID_WIDTH][GRID_HEIGHT];
         for (int[] row : d) {
             Arrays.fill(row, Integer.MAX_VALUE);
         }
         d[start.x][start.y] = 0;
         PriorityQueue<Integer> q = new PriorityQueue<>();
-        q.add((GRID_WIDTH - 1) * start.y + start.x);
+        q.add(GRID_WIDTH * (start.y - 1) + start.x);
 
         while (!q.isEmpty()) {
             int cur = q.poll();
-            if (cur == ((GRID_WIDTH - 1) * end.y + end.x)) {
+            if (cur == (GRID_WIDTH * (end.y - 1) + end.x)) {
                 break;
             }
-            Point curP = new Point(cur % GRID_WIDTH, cur / GRID_WIDTH);
+            Point curP = new Point(cur % GRID_WIDTH, (cur - cur % GRID_WIDTH) / GRID_WIDTH);
             for (Point p : getNeighbors(curP)) {
-                q.add((GRID_WIDTH - 1) * p.y + p.x);
+                q.add(GRID_WIDTH * (p.y - 1) + p.x);
                 if (d[curP.x][curP.y] + grid2D.getCell(p.x, p.y) < d[p.x][p.y]) {
                     d[p.x][p.y] = d[curP.x][curP.y] + grid2D.getCell(p.x, p.y);
-                    prev[(GRID_WIDTH - 1) * p.y + p.x] = cur;
+                    prev[GRID_WIDTH * (p.y - 1) + p.x] = cur;
                 }
             }
         }
 
-        int cur = prev[(GRID_WIDTH - 1) * end.y + end.x];
+        int cur = prev[GRID_WIDTH * (end.y - 1) + end.x];
         while (cur != -1) {
-            pointArrayList.add(new Point(cur % GRID_WIDTH, cur / GRID_WIDTH));
+            pointArrayList.add(new Point(cur % GRID_WIDTH, (cur - cur % GRID_WIDTH) / GRID_WIDTH));
             cur = prev[cur];
         }
 
