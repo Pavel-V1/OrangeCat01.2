@@ -6,10 +6,10 @@ import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 
-public class MazeSolver extends JPanel {
+public class PathFinder extends JPanel {
     public static final int CELL_SIZE = 20;
-    public static int GRID_WIDTH = 20;
-    public static int GRID_HEIGHT = 20;
+    public static final int GRID_WIDTH = 20;
+    public static final int GRID_HEIGHT = 20;
     public static int settingValue = 1;
 
     private static Grid2D grid2D = new Grid2D(GRID_WIDTH, GRID_HEIGHT);
@@ -18,7 +18,7 @@ public class MazeSolver extends JPanel {
     private Point end = null;
     private ArrayList<Point> pointArrayList = new ArrayList<>();
 
-    MazeSolver() {
+    PathFinder() {
         setPreferredSize(new Dimension(GRID_WIDTH * CELL_SIZE, GRID_HEIGHT * CELL_SIZE));
         setBackground(Color.WHITE);
         addMouseListener(new MouseAdapter() {
@@ -96,34 +96,39 @@ public class MazeSolver extends JPanel {
 
         clearPreviousPath();
 
-//        PathFinder.findPath();
-
-        Queue<Point> queue = new LinkedList<>();
-        boolean[][] visited = new boolean[GRID_HEIGHT][GRID_WIDTH];
-        Map<Point, Point> parentMap = new HashMap<>();
-
-        queue.add(start);
-        visited[start.x][start.y] = true;
-
-        while (!queue.isEmpty()) {
-            Point current = queue.poll();
-
-            if (current.equals(end)) break;
-
-            for (Point neighbor : getNeighbors(current)) {
-                if (!visited[neighbor.x][neighbor.y] && grid[neighbor.x][neighbor.y] != Integer.MAX_VALUE) {
-                    queue.add(neighbor);
-                    visited[neighbor.x][neighbor.y] = true;
-                    parentMap.put(neighbor, current);
-                }
-            }
+        int[][] d = new int[GRID_WIDTH][GRID_HEIGHT];
+        for (int[] row : d) {
+            Arrays.fill(row, Integer.MAX_VALUE);
         }
+        d[start.x][start.y] = 0;
+        PriorityQueue<Point> q = new PriorityQueue<>();
 
-        Point step = end;
-        while (parentMap.containsKey(step)) {
-            pointArrayList.add(step);
-            step = parentMap.get(step);
-        }
+//        Queue<Point> queue = new LinkedList<>();
+//        boolean[][] visited = new boolean[GRID_HEIGHT][GRID_WIDTH];
+//        Map<Point, Point> parentMap = new HashMap<>();
+//
+//        queue.add(start);
+//        visited[start.x][start.y] = true;
+//
+//        while (!queue.isEmpty()) {
+//            Point current = queue.poll();
+//
+//            if (current.equals(end)) break;
+//
+//            for (Point neighbor : getNeighbors(current)) {
+//                if (!visited[neighbor.x][neighbor.y] && grid[neighbor.x][neighbor.y] != Integer.MAX_VALUE) {
+//                    queue.add(neighbor);
+//                    visited[neighbor.x][neighbor.y] = true;
+//                    parentMap.put(neighbor, current);
+//                }
+//            }
+//        }
+//
+//        Point step = end;
+//        while (parentMap.containsKey(step)) {
+//            pointArrayList.add(step);
+//            step = parentMap.get(step);
+//        }
 
         repaint();
     }
